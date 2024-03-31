@@ -1,0 +1,89 @@
+{
+  "version": 3,
+  "targets": {
+    "net8.0": {
+      "Fire-Emblem-View/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/Fire-Emblem-View.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Fire-Emblem-View.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Fire-Emblem-View/1.0.0": {
+      "type": "project",
+      "path": "../Fire-Emblem-View/Fire-Emblem-View.csproj",
+      "msbuildProject": "../Fire-Emblem-View/Fire-Emblem-View.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net8.0": [
+      "Fire-Emblem-View >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Vicente Pareja\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\Vicente Pareja\\Desktop\\Universidad\\2024\\Semetre 1\\Diseño detallado\\Entrega 1 v3\\Entrega1-Detallado-v3\\Fire-Emblem\\Fire-Emblem\\Fire-Emblem\\Fire-Emblem.csproj",
+      "projectName": "Fire-Emblem",
+      "projectPath": "C:\\Users\\Vicente Pareja\\Desktop\\Universidad\\2024\\Semetre 1\\Diseño detallado\\Entrega 1 v3\\Entrega1-Detallado-v3\\Fire-Emblem\\Fire-Emblem\\Fire-Emblem\\Fire-Emblem.csproj",
+      "packagesPath": "C:\\Users\\Vicente Pareja\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Vicente Pareja\\Desktop\\Universidad\\2024\\Semetre 1\\Diseño detallado\\Entrega 1 v3\\Entrega1-Detallado-v3\\Fire-Emblem\\Fire-Emblem\\Fire-Emblem\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\Vicente Pareja\\AppData\\Roaming\\NuGet\\NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "net8.0"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "projectReferences": {
+            "C:\\Users\\Vicente Pareja\\Desktop\\Universidad\\2024\\Semetre 1\\Diseño detallado\\Entrega 1 v3\\Entrega1-Detallado-v3\\Fire-Emblem\\Fire-Emblem\\Fire-Emblem-View\\Fire-Emblem-View.csproj": {
+              "projectPath": "C:\\Users\\Vicente Pareja\\Desktop\\Universidad\\2024\\Semetre 1\\Diseño detallado\\Entrega 1 v3\\Entrega1-Detallado-v3\\Fire-Emblem\\Fire-Emblem\\Fire-Emblem-View\\Fire-Emblem-View.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net8.0": {
+        "targetAlias": "net8.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.203/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}
