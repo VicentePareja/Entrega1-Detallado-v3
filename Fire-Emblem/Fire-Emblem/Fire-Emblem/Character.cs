@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Fire_Emblem;
 
-public class Characters
+public class Character
 {
     [JsonPropertyName("Name")] public string Nombre { get; set; }
     [JsonPropertyName("Weapon")] public string Arma { get; set; }
@@ -15,16 +15,22 @@ public class Characters
     [JsonConverter(typeof(StringToIntConverter))] [JsonPropertyName("Spd")] public int Spd { get; set; }
     [JsonConverter(typeof(StringToIntConverter))] [JsonPropertyName("Def")] public int Def { get; set; }
     [JsonConverter(typeof(StringToIntConverter))] [JsonPropertyName("Res")] public int Res { get; set; }
-    public List<Skills> Skills { get; private set; }
-    
+    public List<Skill> Skills { get; private set; }
+
     public Character()
     {
-        Skills = new List<Skills>();
+        Skills = new List<Skill>();
     }
-    
-    public void AddSkill(Skills skill)
+
+    public void AddSkill(Skill skill)
     {
         Skills.Add(skill);
+    }
+
+    // Nuevo método para reemplazar toda la lista de habilidades
+    public void SetSkills(List<Skill> skills)
+    {
+        Skills = skills;
     }
 }
 

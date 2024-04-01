@@ -1,14 +1,13 @@
 ﻿namespace Fire_Emblem;
 
-public class Skills
+public class Skill
 {
     
-    {
     public string Name { get; set; }
     public string Description { get; set; }
 
     // Constructor
-    public Skills(string name, string description)
+    public Skill(string name, string description)
     {
         Name = name;
         Description = description;
@@ -20,7 +19,7 @@ public class Skills
         Console.WriteLine($"Habilidad: {Name}\nDescripción: {Description}\n");
     }
 }
-}
+
 
 
 
