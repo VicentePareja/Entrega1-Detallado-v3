@@ -183,103 +183,68 @@ namespace Fire_Emblem
             var lines = File.ReadAllLines(selectedFilePath);
             bool isPlayer1 = true; // Comienza asignando personajes al equipo del jugador 1
 
-            List<string> currentTeamNames = new List<string>();
-
             foreach (var line in lines)
             {
                 if (line == "Player 1 Team")
                 {
                     isPlayer1 = true;
-                    if (currentTeamNames.Any())
-                    {
-                        AssignCharactersToTeam(currentTeamNames, isPlayer1 ? _player1.Team : _player2.Team);
-                        currentTeamNames.Clear();
-                    }
-                    _view.WriteLine("Player 1 selecciona una opción");
                 }
                 else if (line == "Player 2 Team")
                 {
-                    if (currentTeamNames.Any())
-                    {
-                        AssignCharactersToTeam(currentTeamNames, isPlayer1 ? _player1.Team : _player2.Team);
-                        currentTeamNames.Clear();
-                    }
-                    _view.WriteLine("Player 2 selecciona una opción");
                     isPlayer1 = false;
                 }
                 else
                 {
-                    currentTeamNames.Add(line);
+                    AssignCharacterToTeam(line, isPlayer1 ? _player1.Team : _player2.Team);
                 }
-            }
-
-            // Asigna los personajes restantes al último equipo
-            if (currentTeamNames.Any())
-            {
-                AssignCharactersToTeam(currentTeamNames, isPlayer1 ? _player1.Team : _player2.Team);
             }
         }
 
-        private void AssignCharactersToTeam(List<string> characterNames, Team team)
-{
-    for (int i = 0; i < characterNames.Count; i++)
-    {
-        var characterLine = characterNames[i];
-        _view.WriteLine($"{i}: {characterLine}");
-    }
 
-    string input = _view.ReadLine();
-    Console.WriteLine("aaaaa:" + input);
-    if (int.TryParse(input, out int choice) && choice >= 0 && choice < characterNames.Count)
-    {
-        var characterLine = characterNames[choice];
-        Console.WriteLine("aaaaa:" + input);
-        // Asume que el nombre puede estar seguido de habilidades entre paréntesis
-        var parts = characterLine.Split(" (", 2);
-        var characterName = parts[0];
-        var skillsText = parts.Length > 1 ? parts[1].TrimEnd(')') : string.Empty;
-
-        var originalCharacter = characters.FirstOrDefault(c => c.Nombre == characterName);
-        if (originalCharacter != null)
+        private void AssignCharacterToTeam(string characterLine, Team team)
         {
-            var newCharacter = new Character
-            {
-                Nombre = originalCharacter.Nombre,
-                Arma = originalCharacter.Arma,
-                Género = originalCharacter.Género,
-                HPmáximo = originalCharacter.HPmáximo,
-                HPactual = originalCharacter.HPactual,
-                Atk = originalCharacter.Atk,
-                Spd = originalCharacter.Spd,
-                Def = originalCharacter.Def,
-                Res = originalCharacter.Res,
-            };
+            var parts = characterLine.Split(" (", 2);
+            var characterName = parts[0];
+            var skillsText = parts.Length > 1 ? parts[1].TrimEnd(')') : string.Empty;
 
-            // Procesa y añade las habilidades
-            if (!string.IsNullOrEmpty(skillsText))
+            var originalCharacter = characters.FirstOrDefault(c => c.Nombre == characterName);
+            if (originalCharacter != null)
             {
-                var skillNames = skillsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var skillName in skillNames)
+                var newCharacter = new Character
                 {
-                    var trimmedSkillName = skillName.Trim();
-                    var skill = new Skill(trimmedSkillName, "Descripción no proporcionada");
-                    newCharacter.AddSkill(skill);
-                    _view.WriteLine($"Habilidad procesada: {skill.Name}");
-                }
-            }
+                    Nombre = originalCharacter.Nombre,
+                    Arma = originalCharacter.Arma,
+                    Género = originalCharacter.Género,
+                    HPmáximo = originalCharacter.HPmáximo,
+                    // Aquí se asigna HPactual al valor de HPmáximo
+                    HPactual = originalCharacter.HPmáximo, // Actualizado para igualar a HPmáximo
+                    Atk = originalCharacter.Atk,
+                    Spd = originalCharacter.Spd,
+                    Def = originalCharacter.Def,
+                    Res = originalCharacter.Res,
+                };
 
-            team.Characters.Add(newCharacter);
+                // Procesa y añade las habilidades
+                if (!string.IsNullOrEmpty(skillsText))
+                {
+                    var skillNames = skillsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var skillName in skillNames)
+                    {
+                        var trimmedSkillName = skillName.Trim();
+                        // Crear e incluir habilidades según sea necesario
+                        newCharacter.AddSkill(new Skill(trimmedSkillName, "Descripción no proporcionada"));
+                    }
+                }
+
+                team.Characters.Add(newCharacter);
+            }
+            else
+            {
+                _view.WriteLine($"Personaje no encontrado: {characterName}");
+            }
         }
-        else
-        {
-            _view.WriteLine($"Personaje no encontrado: {characterName}");
-        }
-    }
-    else
-    {
-        _view.WriteLine("Selección inválida.");
-    }
-}
+
+
 
 
         public void ImportarCharacters()
