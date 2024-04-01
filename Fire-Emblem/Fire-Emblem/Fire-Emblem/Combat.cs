@@ -1,5 +1,5 @@
 ﻿using Fire_Emblem_View;
-namespace Fire_Emblem;
+namespace Fire_Emblem
 
 {
     public class Combat
@@ -41,13 +41,11 @@ namespace Fire_Emblem;
 
         private void RealizarTurno(Player atacante, Player defensor)
         {
-            _view.WriteLine($"{atacante.GetType().Name}, elige una unidad para atacar:");
             Character unidadAtacante = EscogerUnidad(atacante);
-
-            _view.WriteLine($"{defensor.GetType().Name}, elige una unidad para defenderse:");
+            
             Character unidadDefensora = EscogerUnidad(defensor);
             
-            Atack ataque = new Atack(unidadAtacante, unidadDefensora);
+            Atack ataque = new Atack(unidadAtacante, unidadDefensora, _view);
             ataque.RealizarAtaque();
             
             if (unidadDefensora.HPactual <= 0)
@@ -58,7 +56,7 @@ namespace Fire_Emblem;
             else
             {
                 
-                Atack contraataque = new Atack(unidadDefensora, unidadAtacante);
+                Atack contraataque = new Atack(unidadDefensora, unidadAtacante, _view);
                 contraataque.RealizarAtaque();
                 if (unidadAtacante.HPactual <= 0)
                 {
@@ -68,27 +66,38 @@ namespace Fire_Emblem;
             }
         }
 
-        private Character EscogerUnidad(Player jugador)
+        private void ImprimirOpcionesDePersonajes(Player jugador)
         {
+            // Asumiendo que "Name" es una propiedad pública de Player para obtener su nombre
+            _view.WriteLine($"{jugador.Name} selecciona una opción");
             for (int i = 0; i < jugador.Team.Characters.Count; i++)
             {
-                _view.WriteLine($"{i + 1}. {jugador.Team.Characters[i].Nombre}");
-            }
-
-            _view.WriteLine("Elige una unidad: ");
-            int eleccion = Convert.ToInt32(_view.ReadLine()) - 1; 
-
-
-            if (eleccion >= 0 && eleccion < jugador.Team.Characters.Count)
-            {
-                return jugador.Team.Characters[eleccion];
-            }
-            else
-            {
-                _view.WriteLine("Elección inválida. Por favor, elige de nuevo.");
-                return EscogerUnidad(jugador); 
+                _view.WriteLine($"{i}: {jugador.Team.Characters[i].Nombre}");
             }
         }
+
+        private Character EscogerUnidad(Player jugador)
+        {
+            ImprimirOpcionesDePersonajes(jugador); // Usa el nuevo método para imprimir opciones
+            int eleccion = -1; // Inicializa elección como inválida
+            do
+            {
+                string input = _view.ReadLine();
+                if (int.TryParse(input, out eleccion) && eleccion >= 0 && eleccion < jugador.Team.Characters.Count)
+                {
+                    // Si la elección es válida, sale del bucle
+                    break;
+                }
+                else
+                {
+                    // Elección inválida, pide al usuario que elija de nuevo
+                    _view.WriteLine("Elección inválida. Por favor, elige de nuevo.");
+                }
+            } while (true); // Continúa hasta que se reciba una entrada válida
+
+            return jugador.Team.Characters[eleccion];
+        }
+
 
         private bool JuegoTerminado()
         {

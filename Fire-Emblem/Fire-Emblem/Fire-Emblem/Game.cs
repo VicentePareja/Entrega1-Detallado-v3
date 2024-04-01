@@ -13,8 +13,8 @@ namespace Fire_Emblem
         {
             _view = view;
             _teamsFolder = teamsFolder;
-            _player1 = new Player();
-            _player2 = new Player();
+            _player1 = new Player("Player 1");
+            _player2 = new Player("Player 2");
         }
 
         public void Play()
@@ -24,8 +24,8 @@ namespace Fire_Emblem
             logica.CargarEquipos(_player1, _player2);
 
             Combat combate = new Combat(_player1, _player2, _view);
-            Combat.Iniciar()
-
+            combate.Iniciar(); // Usa la instancia 'combate' para llamar al método Iniciar
         }
+
     }
 }

@@ -114,11 +114,12 @@ public class Team
     }
 
     
-    public void ImprimirOpcionesDePersonajes(List<string> characterNames)
+    public void ImprimirOpcionesDePersonajes()
     {
-        for (int i = 0; i < characterNames.Count; i++)
+        for (int i = 0; i < Characters.Count; i++)
         {
-            Console.WriteLine($"{i}: {characterNames[i]}");
+            Console.WriteLine($"{i}: {Characters[i].Nombre}"); // Cambio 'Name' por 'Nombre'
         }
     }
+
 }
