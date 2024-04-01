@@ -15,10 +15,32 @@ public class Team
         Console.WriteLine("Detalles del Equipo:");
         foreach (var character in Characters)
         {
-            Console.WriteLine($"Nombre: {character.Nombre}, HP Máximo: {character.HPmáximo}, Ataque: {character.Atk}");
-            // Agrega más detalles según sea necesario
+            Console.WriteLine($"Nombre: {character.Nombre}");
+            Console.WriteLine($"Arma: {character.Arma}");
+            Console.WriteLine($"Género: {character.Género}");
+            Console.WriteLine($"HP Máximo: {character.HPmáximo}");
+            Console.WriteLine($"HP Actual: {character.HPactual}");
+            Console.WriteLine($"Ataque (Atk): {character.Atk}");
+            Console.WriteLine($"Velocidad (Spd): {character.Spd}");
+            Console.WriteLine($"Defensa (Def): {character.Def}");
+            Console.WriteLine($"Resistencia (Res): {character.Res}");
+            // Si las habilidades son importantes para ser mostradas, las incluimos también
+            if (character.Skills != null && character.Skills.Count > 0)
+            {
+                Console.WriteLine("Habilidades:");
+                foreach (var skill in character.Skills)
+                {
+                    Console.WriteLine($"- {skill.Name}: {skill.Description}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Este personaje no tiene habilidades asignadas.");
+            }
+            Console.WriteLine(); // Espacio para separar las unidades
         }
     }
+
 
     public void ImprimirEquipoHabilidades()
     {

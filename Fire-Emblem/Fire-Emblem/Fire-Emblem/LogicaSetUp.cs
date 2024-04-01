@@ -70,54 +70,73 @@ namespace Fire_Emblem
         }
 
         public bool ValidTeams(string selectedFile)
+{
+    var lines = File.ReadAllLines(selectedFile);
+    bool isPlayer1 = true; // Inicialmente asigna personajes al Jugador 1
+
+    Team team1 = new Team();
+    Team team2 = new Team();
+    bool team1Populated = false; // Indica si se han añadido personajes al equipo del Jugador 1
+    bool team2Populated = false; // Indica si se han añadido personajes al equipo del Jugador 2
+
+    List<string> currentTeamNames = new List<string>();
+
+    foreach (var line in lines)
+    {
+        if (line == "Player 1 Team")
         {
-            var lines = File.ReadAllLines(selectedFile);
-            bool isPlayer1 = true; // Inicialmente asigna personajes al Jugador 1
-
-            Team team1 = new Team();
-            Team team2 = new Team();
-            bool team1Defined = false; // Indica si el equipo del Jugador 1 ha sido definido
-            bool team2Defined = false; // Indica si el equipo del Jugador 2 ha sido definido
-
-            List<string> currentTeamNames = new List<string>();
-
-            foreach (var line in lines)
+            // Al cambiar a equipo del Jugador 1, verifica y limpia el equipo del Jugador 2 si necesario
+            if (!isPlayer1 && currentTeamNames.Any())
             {
-                if (line == "Player 1 Team")
-                {
-                    if (team2Defined && !ValidateAndClearCurrentTeam(currentTeamNames, team2)) return false;
-                    currentTeamNames.Clear();
-                    isPlayer1 = true;
-                    team1Defined = true; // Marca que el equipo del Jugador 1 ha sido definido
-                }
-                else if (line == "Player 2 Team")
-                {
-                    if (team1Defined && !ValidateAndClearCurrentTeam(currentTeamNames, team1)) return false;
-                    currentTeamNames.Clear();
-                    isPlayer1 = false;
-                    team2Defined = true; // Marca que el equipo del Jugador 2 ha sido definido
-                }
-                else
-                {
-                    currentTeamNames.Add(line);
-                }
+                team2Populated = true; // Marca que se han añadido personajes al equipo del Jugador 2
+                bool valid = ValidateAndClearCurrentTeam(currentTeamNames, team2);
+                if (!valid) return false;
+                currentTeamNames.Clear();
             }
-
-            // Verificación final para el último equipo
-            if ((isPlayer1 && team1Defined && !ValidateAndClearCurrentTeam(currentTeamNames, team1)) ||
-                (!isPlayer1 && team2Defined && !ValidateAndClearCurrentTeam(currentTeamNames, team2)))
-            {
-                return false;
-            }
-
-            // Verifica que ambos equipos hayan sido definidos y no estén vacíos
-            if (!team1Defined || !team2Defined || team1.Characters.Count == 0 || team2.Characters.Count == 0)
-            {
-                return false;
-            }
-
-            return true; // Todos los equipos son válidos si pasaron las verificaciones
+            isPlayer1 = true;
         }
+        else if (line == "Player 2 Team")
+        {
+            // Al cambiar a equipo del Jugador 2, verifica y limpia el equipo del Jugador 1 si necesario
+            if (isPlayer1 && currentTeamNames.Any())
+            {
+                team1Populated = true; // Marca que se han añadido personajes al equipo del Jugador 1
+                bool valid = ValidateAndClearCurrentTeam(currentTeamNames, team1);
+                if (!valid) return false;
+                currentTeamNames.Clear();
+            }
+            isPlayer1 = false;
+        }
+        else
+        {
+            currentTeamNames.Add(line); // Añade nombres (y habilidades) a la lista temporal
+        }
+    }
+
+    // Verificación final para el último equipo
+    if (currentTeamNames.Any())
+    {
+        if (isPlayer1)
+        {
+            team1Populated = true; // Marca que se han añadido personajes al equipo del Jugador 1
+        }
+        else
+        {
+            team2Populated = true; // Marca que se han añadido personajes al equipo del Jugador 2
+        }
+        bool valid = ValidateAndClearCurrentTeam(currentTeamNames, isPlayer1 ? team1 : team2);
+        if (!valid) return false;
+    }
+
+    // Verifica que ambos equipos hayan sido poblados con al menos un personaje
+    if (!team1Populated || !team2Populated)
+    {
+        return false;
+    }
+
+    return true; // Ambos equipos son válidos si pasaron las verificaciones
+}
+
 
 
         

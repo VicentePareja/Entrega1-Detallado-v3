@@ -22,6 +22,8 @@ namespace Fire_Emblem
             // Instanciar LogicaSetUp y delegar la lógica
             LogicaSetUp logica = new LogicaSetUp(_view, _teamsFolder);
             logica.CargarEquipos(_player1, _player2);
+            
+            _player1.Team.ImprimirEquipo();
 
         }
     }
