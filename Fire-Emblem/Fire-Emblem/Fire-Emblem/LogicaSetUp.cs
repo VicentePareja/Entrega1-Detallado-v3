@@ -72,11 +72,12 @@ namespace Fire_Emblem
         public bool ValidTeams(string selectedFile)
         {
             var lines = File.ReadAllLines(selectedFile);
-            bool isPlayer1 = true; // Controla a qué jugador se están asignando personajes
+            bool isPlayer1 = true; // Inicialmente asigna personajes al Jugador 1
 
-            // Crea equipos temporales para validar
             Team team1 = new Team();
             Team team2 = new Team();
+            bool team1Defined = false; // Indica si el equipo del Jugador 1 ha sido definido
+            bool team2Defined = false; // Indica si el equipo del Jugador 2 ha sido definido
 
             List<string> currentTeamNames = new List<string>();
 
@@ -84,25 +85,17 @@ namespace Fire_Emblem
             {
                 if (line == "Player 1 Team")
                 {
-                    // Verifica y limpia el equipo anterior antes de cambiar
-                    if (currentTeamNames.Any())
-                    {
-                        bool valid = ValidateAndClearCurrentTeam(currentTeamNames, isPlayer1 ? team1 : team2);
-                        if (!valid) return false; // Si el equipo actual no es válido, retorna falso
-                        currentTeamNames.Clear();
-                    }
+                    if (team2Defined && !ValidateAndClearCurrentTeam(currentTeamNames, team2)) return false;
+                    currentTeamNames.Clear();
                     isPlayer1 = true;
+                    team1Defined = true; // Marca que el equipo del Jugador 1 ha sido definido
                 }
                 else if (line == "Player 2 Team")
                 {
-                    // Verifica y limpia el equipo anterior antes de cambiar
-                    if (currentTeamNames.Any())
-                    {
-                        bool valid = ValidateAndClearCurrentTeam(currentTeamNames, isPlayer1 ? team1 : team2);
-                        if (!valid) return false; // Si el equipo actual no es válido, retorna falso
-                        currentTeamNames.Clear();
-                    }
+                    if (team1Defined && !ValidateAndClearCurrentTeam(currentTeamNames, team1)) return false;
+                    currentTeamNames.Clear();
                     isPlayer1 = false;
+                    team2Defined = true; // Marca que el equipo del Jugador 2 ha sido definido
                 }
                 else
                 {
@@ -110,15 +103,23 @@ namespace Fire_Emblem
                 }
             }
 
-            // Verifica el último equipo después de salir del bucle
-            if (currentTeamNames.Any())
+            // Verificación final para el último equipo
+            if ((isPlayer1 && team1Defined && !ValidateAndClearCurrentTeam(currentTeamNames, team1)) ||
+                (!isPlayer1 && team2Defined && !ValidateAndClearCurrentTeam(currentTeamNames, team2)))
             {
-                bool valid = ValidateAndClearCurrentTeam(currentTeamNames, isPlayer1 ? team1 : team2);
-                if (!valid) return false; // Si el equipo final no es válido, retorna falso
+                return false;
             }
 
-            return true; // Todos los equipos son válidos
+            // Verifica que ambos equipos hayan sido definidos y no estén vacíos
+            if (!team1Defined || !team2Defined || team1.Characters.Count == 0 || team2.Characters.Count == 0)
+            {
+                return false;
+            }
+
+            return true; // Todos los equipos son válidos si pasaron las verificaciones
         }
+
+
         
         private bool ValidateAndClearCurrentTeam(List<string> characterNames, Team team)
         {
