@@ -22,10 +22,9 @@ namespace Fire_Emblem
             // Realizar el Setup
             LogicaSetUp logica = new LogicaSetUp(_view, _teamsFolder);
             logica.CargarEquipos(_player1, _player2);
-            
-            _player1.Team.ImprimirEquipo();
-            
-            _player2.Team.ImprimirEquipo();
+
+            Combat combate = new Combat(_player1, _player2, _view);
+            Combat.Iniciar()
 
         }
     }
