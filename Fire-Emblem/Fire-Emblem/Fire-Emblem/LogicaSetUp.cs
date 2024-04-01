@@ -11,6 +11,7 @@ namespace Fire_Emblem
         private View _view;
         private string _teamsFolder;
         private List<Character> characters;
+        private List<Skill> skills;
         private Player _player1;
         private Player _player2;
 
@@ -49,6 +50,7 @@ namespace Fire_Emblem
         
                 // Llama a ImportarCharacters para cargar los personajes desde el JSON
                 ImportarCharacters();
+                ImportarSkills();
         
                 // Ahora llama a ChooseCharacters pasándole la ruta del archivo seleccionado
                 if (ValidTeams(selectedFile))
@@ -120,17 +122,40 @@ namespace Fire_Emblem
         
         private bool ValidateAndClearCurrentTeam(List<string> characterNames, Team team)
         {
-            foreach (var name in characterNames)
+            foreach (var fullCharacterLine in characterNames)
             {
-                // Aquí simplemente añadimos los personajes por nombre; no necesitamos instancias completas
-                // Esto es solo para la validación de duplicados
-                team.Characters.Add(new Character { Nombre = name });
+                // Separa el nombre del personaje de sus habilidades (si las hay)
+                var parts = fullCharacterLine.Split(" (", 2);
+                var characterName = parts[0];
+                var skillsText = parts.Length > 1 ? parts[1].TrimEnd(')') : string.Empty;
+        
+                // Crea una instancia de Character
+                var character = new Character { Nombre = characterName };
+
+                // Procesa y añade las habilidades si existen
+                if (!string.IsNullOrEmpty(skillsText))
+                {
+                    var skillNames = skillsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var skillName in skillNames)
+                    {
+                        var trimmedSkillName = skillName.Trim();
+                        character.AddSkill(new Skill(trimmedSkillName, "Descripción no proporcionada")); // Asume descripción genérica
+                    }
+                }
+
+                // Añade el personaje al equipo temporal
+                team.Characters.Add(character);
             }
 
+            // Verifica si el equipo es válido
             bool isValid = team.EsEquipoValido();
-            team.Characters.Clear(); // Limpia el equipo después de la validación para reutilizarlo
+
+            // Limpia el equipo después de la validación para reutilizarlo
+            team.Characters.Clear();
+
             return isValid;
         }
+
 
 
         public void ChooseCharacters(string selectedFilePath)
@@ -174,52 +199,67 @@ namespace Fire_Emblem
                 AssignCharactersToTeam(currentTeamNames, isPlayer1 ? _player1.Team : _player2.Team);
             }
         }
+
         private void AssignCharactersToTeam(List<string> characterNames, Team team)
+{
+    for (int i = 0; i < characterNames.Count; i++)
+    {
+        var characterLine = characterNames[i];
+        _view.WriteLine($"{i}: {characterLine}");
+    }
+
+    string input = _view.ReadLine();
+    Console.WriteLine("aaaaa:" + input);
+    if (int.TryParse(input, out int choice) && choice >= 0 && choice < characterNames.Count)
+    {
+        var characterLine = characterNames[choice];
+        Console.WriteLine("aaaaa:" + input);
+        // Asume que el nombre puede estar seguido de habilidades entre paréntesis
+        var parts = characterLine.Split(" (", 2);
+        var characterName = parts[0];
+        var skillsText = parts.Length > 1 ? parts[1].TrimEnd(')') : string.Empty;
+
+        var originalCharacter = characters.FirstOrDefault(c => c.Nombre == characterName);
+        if (originalCharacter != null)
         {
-            for (int i = 0; i < characterNames.Count; i++)
+            var newCharacter = new Character
             {
-                var characterName = characterNames[i];
-                _view.WriteLine($"{i}: {characterName}");
-            }
+                Nombre = originalCharacter.Nombre,
+                Arma = originalCharacter.Arma,
+                Género = originalCharacter.Género,
+                HPmáximo = originalCharacter.HPmáximo,
+                HPactual = originalCharacter.HPactual,
+                Atk = originalCharacter.Atk,
+                Spd = originalCharacter.Spd,
+                Def = originalCharacter.Def,
+                Res = originalCharacter.Res,
+            };
 
-            string input = _view.ReadLine();
-            if (int.TryParse(input, out int choice) && choice >= 0 && choice < characterNames.Count)
+            // Procesa y añade las habilidades
+            if (!string.IsNullOrEmpty(skillsText))
             {
-                var selectedCharacterName = characterNames[choice];
-                var originalCharacter = characters.FirstOrDefault(c => c.Nombre == selectedCharacterName);
-                if (originalCharacter != null)
+                var skillNames = skillsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var skillName in skillNames)
                 {
-                    // Crea una nueva instancia del personaje para evitar duplicados
-                    var newCharacter = new Character
-                    {
-                        Nombre = originalCharacter.Nombre,
-                        Arma = originalCharacter.Arma,
-                        Género = originalCharacter.Género,
-                        HPmáximo = originalCharacter.HPmáximo,
-                        HPactual = originalCharacter.HPactual,
-                        Atk = originalCharacter.Atk,
-                        Spd = originalCharacter.Spd,
-                        Def = originalCharacter.Def,
-                        Res = originalCharacter.Res,
-                    };
-
-                    // Copia las habilidades del personaje original al nuevo personaje
-                    
-                }
-                else
-                {
-                    _view.WriteLine($"Personaje no encontrado: {selectedCharacterName}");
+                    var trimmedSkillName = skillName.Trim();
+                    var skill = new Skill(trimmedSkillName, "Descripción no proporcionada");
+                    newCharacter.AddSkill(skill);
+                    _view.WriteLine($"Habilidad procesada: {skill.Name}");
                 }
             }
-            else
-            {
-                _view.WriteLine("Selección inválida.");
-            }
+
+            team.Characters.Add(newCharacter);
         }
-        
-        
-        
-
+        else
+        {
+            _view.WriteLine($"Personaje no encontrado: {characterName}");
+        }
+    }
+    else
+    {
+        _view.WriteLine("Selección inválida.");
+    }
+}
 
 
         public void ImportarCharacters()
@@ -247,6 +287,37 @@ namespace Fire_Emblem
                 _view.WriteLine($"Error al importar personajes: {ex.Message}");
             }
         }
+        
+        public void ImportarSkills()
+        {
+            string jsonPath = Path.Combine(_teamsFolder, "../..", "skills.json"); // Sube dos niveles en la jerarquía de directorios
+
+            try
+            {
+                // Lee el archivo JSON
+                string jsonString = File.ReadAllText(jsonPath);
+
+                // No es necesario el convertidor personalizado para habilidades si solo contienen cadenas y no números en formato de texto
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                // Deserializa el contenido del archivo en la lista de habilidades
+                skills = JsonSerializer.Deserialize<List<Skill>>(jsonString, options);
+
+                // O, si usas un diccionario:
+                // skillsByName = JsonSerializer.Deserialize<List<Skill>>(jsonString, options)
+                //     .ToDictionary(skill => skill.Name, skill => skill);
+
+                //Console.WriteLine("Habilidades importadas correctamente.");
+            }
+            catch (Exception ex)
+            {
+                //Console.WriteLine($"Error al importar habilidades: {ex.Message}");
+            }
+        }
+
 
 
     }

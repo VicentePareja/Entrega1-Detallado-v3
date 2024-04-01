@@ -59,10 +59,38 @@ public class Team
             {
                 return false; // Se encontró un nombre duplicado, el equipo no es válido
             }
+        
+            // Verifica las condiciones de las habilidades para cada personaje
+            if (!SonHabilidadesValidas(character))
+            {
+                return false; // Las habilidades del personaje no son válidas
+            }
         }
 
-        return true; // El equipo es válido si pasa ambas verificaciones
+        return true; // El equipo es válido si pasa todas las verificaciones
     }
+
+    private bool SonHabilidadesValidas(Character character)
+    {
+        // Verifica que el personaje no tenga más de 2 habilidades
+        if (character.Skills.Count > 2)
+        {
+            return false; // No es válido tener más de 2 habilidades
+        }
+
+        // Verifica que no haya habilidades duplicadas
+        HashSet<string> habilidadesUnicas = new HashSet<string>();
+        foreach (var skill in character.Skills)
+        {
+            if (!habilidadesUnicas.Add(skill.Name))
+            {
+                return false; // Se encontró una habilidad duplicada, no es válido
+            }
+        }
+
+        return true; // Las habilidades son válidas
+    }
+
     
     public void ImprimirOpcionesDePersonajes(List<string> characterNames)
     {
