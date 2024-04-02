@@ -42,35 +42,56 @@ namespace Fire_Emblem
 
 
         private void RealizarTurno(Player atacante, Player defensor, int turno)
+{
+    Character unidadAtacante = EscogerUnidad(atacante);
+    Character unidadDefensora = EscogerUnidad(defensor);
+
+    _view.WriteLine($"Round {turno}: {unidadAtacante.Nombre} ({atacante.Name}) comienza");
+
+    string ventaja = CalcularVentaja(unidadAtacante, unidadDefensora);
+    ImprimirVentaja(unidadAtacante, unidadDefensora, ventaja);
+    
+    Atack ataque = new Atack(unidadAtacante, unidadDefensora, _view);
+    ataque.RealizarAtaque(ventaja);
+    
+    if (unidadDefensora.HPactual > 0)
+    {
+        ataque.RealizarContraAtaque(ventaja);
+    }
+    
+    
+    
+
+    if (unidadAtacante.HPactual > 0 && unidadDefensora.HPactual > 0)
+    {
+        if (unidadAtacante.Spd >= unidadDefensora.Spd + 5)
         {
-            Character unidadAtacante = EscogerUnidad(atacante);
-            
-            Character unidadDefensora = EscogerUnidad(defensor);
-
-            _view.WriteLine($"Round 1: {unidadAtacante.Nombre} ({atacante.Name}) comienza");
-
-            string ventaja = CalcularVentaja(unidadAtacante, unidadDefensora);
-            ImprimirVentaja(unidadAtacante, unidadDefensora, ventaja);
-            
-            Atack ataque = new Atack(unidadAtacante, unidadDefensora, _view);
             ataque.RealizarAtaque(ventaja);
-            
-            if (unidadDefensora.HPactual <= 0)
-            {
-                defensor.Team.Characters.Remove(unidadDefensora);
-                _view.WriteLine($"{unidadDefensora.Nombre} ha sido eliminado del equipo de {defensor.GetType().Name}.");
-            }
-            else
-            {
-                
-                ataque.RealizarContraAtaque(ventaja);
-                if (unidadAtacante.HPactual <= 0)
-                {
-                    atacante.Team.Characters.Remove(unidadAtacante);
-                    _view.WriteLine($"{unidadAtacante.Nombre} ha sido eliminado del equipo de {atacante.GetType().Name}.");
-                }
-            }
         }
+        else if (unidadDefensora.Spd >= unidadAtacante.Spd + 5)
+        {
+            ataque.RealizarContraAtaque(ventaja);
+        }
+        else
+        {
+            _view.WriteLine("Ninguna unidad puede hacer un Follow-Up.");
+        }
+    }
+    
+    if (unidadAtacante.HPactual <= 0)
+    {
+        atacante.Team.Characters.Remove(unidadAtacante);
+    }
+
+    if (unidadDefensora.HPactual <= 0)
+    {
+        defensor.Team.Characters.Remove(unidadDefensora);
+    }
+    
+    _view.WriteLine($"{unidadAtacante.Nombre} ({unidadAtacante.HPactual}) : {unidadDefensora.Nombre} ({unidadDefensora.HPactual})");
+    
+}
+
 
         public string CalcularVentaja(Character atacante, Character defensor)
         {
@@ -157,11 +178,11 @@ namespace Fire_Emblem
         {
             if (Jugador1.Team.Characters.Count == 0)
             {
-                _view.WriteLine("Jugador 2 es el ganador!");
+                _view.WriteLine($"{Jugador2.Name} ganó");
             }
             else if (Jugador2.Team.Characters.Count == 0)
             {
-                _view.WriteLine("Jugador 1 es el ganador!");
+                _view.WriteLine($"{Jugador1.Name} ganó");
             }
             else
             {

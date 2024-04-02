@@ -20,7 +20,7 @@ public class Atack
         double WTB = ventaja == "atacante" ? 1.2 : ventaja == "defensor" ? 0.8 : 1.0;
 
         // Determinar si usar Def o Res
-        int defensaRival = Atacante.Arma == "mágica" ? Defensora.Res : Defensora.Def;
+        int defensaRival = Atacante.Arma == "Magic" ? Defensora.Res : Defensora.Def;
 
         // Calcular daño
         int danio = (int)((Atacante.Atk * WTB) - defensaRival);
@@ -29,11 +29,7 @@ public class Atack
         _view.WriteLine($"{Atacante.Nombre} ataca a {Defensora.Nombre} con {danio} de daño");
 
         Defensora.HPactual -= danio;
-
-        if (Defensora.HPactual <= 0)
-        {
-            _view.WriteLine($"{Defensora.Nombre} ha sido derrotado!");
-        }
+        
     }
     
     public void RealizarContraAtaque(string ventaja)
@@ -53,10 +49,6 @@ public class Atack
 
         Atacante.HPactual -= danio;
 
-        if (Atacante.HPactual <= 0)
-        {
-            _view.WriteLine($"{Atacante.Nombre} ha sido derrotado!");
-        }
     }
 
     

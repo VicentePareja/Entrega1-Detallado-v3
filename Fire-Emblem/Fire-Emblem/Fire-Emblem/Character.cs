@@ -10,7 +10,12 @@ public class Character
     [JsonPropertyName("Weapon")] public string Arma { get; set; }
     [JsonPropertyName("Gender")] public string Género { get; set; }
     [JsonPropertyName("HP")] public int HPmáximo { get; set; }
-    public int HPactual { get; set; }
+    private int _hpActual; // Campo privado para HPactual
+    public int HPactual 
+    { 
+        get => _hpActual; 
+        set => _hpActual = Math.Max(value, 0); // Asegura que HPactual nunca sea menor que 0
+    }
     [JsonConverter(typeof(StringToIntConverter))] [JsonPropertyName("Atk")] public int Atk { get; set; }
     [JsonConverter(typeof(StringToIntConverter))] [JsonPropertyName("Spd")] public int Spd { get; set; }
     [JsonConverter(typeof(StringToIntConverter))] [JsonPropertyName("Def")] public int Def { get; set; }
@@ -33,4 +38,3 @@ public class Character
         Skills = skills;
     }
 }
-
