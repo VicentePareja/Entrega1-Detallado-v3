@@ -17,19 +17,20 @@ namespace Fire_Emblem
 
         public void Iniciar()
         {
-            
             int contador = 0;
-            while (contador < 3)
+            while (contador < 3) // Limita a 3 rondas de combate
             {
                 contador++;
-                // Jugador 1 ataca y Jugador 2 se defiende
-                RealizarTurno(Jugador1, Jugador2);
-
-                // Verificar si el juego debe terminar
-                if (JuegoTerminado()) break;
-
-                // Jugador 2 ataca y Jugador 1 se defiende
-                RealizarTurno(Jugador2, Jugador1);
+                if (contador % 2 == 1) // Turnos impares: Jugador 1 ataca, Jugador 2 se defiende
+                {
+                    // Jugador 1 ataca y Jugador 2 se defiende
+                    RealizarTurno(Jugador1, Jugador2, contador);
+                }
+                else // Turnos pares: Jugador 2 ataca, Jugador 1 se defiende
+                {
+                    // Jugador 2 ataca y Jugador 1 se defiende
+                    RealizarTurno(Jugador2, Jugador1, contador);
+                }
 
                 // Verificar si el juego debe terminar
                 if (JuegoTerminado()) break;
@@ -39,11 +40,17 @@ namespace Fire_Emblem
             AnunciarGanador();
         }
 
-        private void RealizarTurno(Player atacante, Player defensor)
+
+        private void RealizarTurno(Player atacante, Player defensor, int turno)
         {
             Character unidadAtacante = EscogerUnidad(atacante);
             
             Character unidadDefensora = EscogerUnidad(defensor);
+
+            _view.WriteLine($"Round 1: {unidadAtacante.Nombre} ({atacante.Name}) comienza");
+
+            string ventaja = CalcularVentaja(unidadAtacante, unidadDefensora);
+            ImprimirVentaja(unidadAtacante, unidadDefensora, ventaja);
             
             Atack ataque = new Atack(unidadAtacante, unidadDefensora, _view);
             ataque.RealizarAtaque();
@@ -65,6 +72,48 @@ namespace Fire_Emblem
                 }
             }
         }
+
+        public string CalcularVentaja(Character atacante, Character defensor)
+        {
+            // Definir el triángulo de armas
+            var ventajas = new Dictionary<string, string>
+            {
+                {"Sword", "Axe"},
+                {"Axe", "Lance"},
+                {"Lance", "Sword"}
+            };
+
+            // Comprobar si el atacante tiene ventaja
+            if (ventajas.ContainsKey(atacante.Arma) && ventajas[atacante.Arma] == defensor.Arma)
+            {
+                return "atacante";
+            }
+            // Comprobar si el defensor tiene ventaja
+            else if (ventajas.ContainsKey(defensor.Arma) && ventajas[defensor.Arma] == atacante.Arma)
+            {
+                return "defensor";
+            }
+            // Si ninguno tiene ventaja
+            return "ninguno";
+        }
+
+        public void ImprimirVentaja(Character atacante, Character defensor, string ventaja)
+        {
+            switch (ventaja)
+            {
+                case "atacante":
+                    _view.WriteLine($"{atacante.Nombre} ({atacante.Arma}) tiene ventaja con respecto a {defensor.Nombre} ({defensor.Arma})");
+                    break;
+                case "defensor":
+                    _view.WriteLine($"{defensor.Nombre} ({defensor.Arma}) tiene ventaja con respecto a {atacante.Nombre} ({atacante.Arma})");
+                    break;
+                case "ninguno":
+                    _view.WriteLine("Ninguna unidad tiene ventaja con respecto a la otra");
+                    break;
+            }
+        }
+
+
 
         private void ImprimirOpcionesDePersonajes(Player jugador)
         {

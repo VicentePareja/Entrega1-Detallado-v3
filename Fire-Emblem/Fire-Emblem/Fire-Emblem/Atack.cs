@@ -22,7 +22,7 @@ public class Atack
 
         danio = Math.Max(danio, 0);
 
-        _view.WriteLine($"{Atacante.Nombre} ataca a {Defensora.Nombre} causando {danio} puntos de daño.");
+        _view.WriteLine($"{Atacante.Nombre} ataca a {Defensora.Nombre} con {danio} puntos de daño");
 
 
         Defensora.HPactual -= danio;

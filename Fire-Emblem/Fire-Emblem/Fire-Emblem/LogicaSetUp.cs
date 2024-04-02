@@ -23,7 +23,7 @@ namespace Fire_Emblem
             
         }
 
-        public void CargarEquipos(Player player1, Player player2)
+        public bool CargarEquipos(Player player1, Player player2)
         {
             _player1 = player1;
             _player2 = player2;
@@ -34,7 +34,7 @@ namespace Fire_Emblem
             if (files.Length == 0)
             {
                 _view.WriteLine("No hay archivos disponibles.");
-                return;
+                return false;
             }
 
             for (int i = 0; i < files.Length; i++)
@@ -56,16 +56,19 @@ namespace Fire_Emblem
                 if (ValidTeams(selectedFile))
                 {
                     ChooseCharacters(selectedFile);
+                    return true;
                 }
                 else
                 {
                     _view.WriteLine("Archivo de equipos no válido");
+                    return false;
                 }
                 
             }
             else
             {
                 _view.WriteLine("Selección inválida.");
+                return false;
             }
         }
 

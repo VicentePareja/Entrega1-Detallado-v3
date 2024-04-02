@@ -21,10 +21,13 @@ namespace Fire_Emblem
         {
             // Realizar el Setup
             LogicaSetUp logica = new LogicaSetUp(_view, _teamsFolder);
-            logica.CargarEquipos(_player1, _player2);
 
-            Combat combate = new Combat(_player1, _player2, _view);
-            combate.Iniciar(); // Usa la instancia 'combate' para llamar al método Iniciar
+            if (logica.CargarEquipos(_player1, _player2))
+            {
+                Combat combate = new Combat(_player1, _player2, _view);
+                combate.Iniciar(); // Usa la instancia 'combate' para llamar al método Iniciar
+            }
+            
         }
 
     }
