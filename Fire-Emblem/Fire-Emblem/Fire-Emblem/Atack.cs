@@ -14,26 +14,52 @@ public class Atack
         _view = view;
     }
 
-    public void RealizarAtaque()
+    public void RealizarAtaque(string ventaja)
     {
+        // Determinar W T B basado en la ventaja o desventaja del triángulo de armas
+        double WTB = ventaja == "atacante" ? 1.2 : ventaja == "defensor" ? 0.8 : 1.0;
 
-        int danio = Atacante.Atk - Defensora.Def;
+        // Determinar si usar Def o Res
+        int defensaRival = Atacante.Arma == "mágica" ? Defensora.Res : Defensora.Def;
 
-
+        // Calcular daño
+        int danio = (int)((Atacante.Atk * WTB) - defensaRival);
         danio = Math.Max(danio, 0);
 
-        _view.WriteLine($"{Atacante.Nombre} ataca a {Defensora.Nombre} con {danio} puntos de daño");
-
+        _view.WriteLine($"{Atacante.Nombre} ataca a {Defensora.Nombre} con {danio} de daño");
 
         Defensora.HPactual -= danio;
-
 
         if (Defensora.HPactual <= 0)
         {
             _view.WriteLine($"{Defensora.Nombre} ha sido derrotado!");
-      
         }
     }
+    
+    public void RealizarContraAtaque(string ventaja)
+    {
+        // Invertir la lógica de ventaja para el contraataque
+        double WTB = ventaja == "defensor" ? 1.2 : ventaja == "atacante" ? 0.8 : 1.0;
+
+        // En el contraataque, el defensor original ahora es el atacante, y viceversa
+        // Por lo tanto, debemos ajustar qué defensa usar basado en el arma del defensor original, que ahora ataca
+        int defensaRival = Defensora.Arma == "Magic" ? Atacante.Res : Atacante.Def;
+
+        // Calcular daño para el contraataque
+        int danio = (int)((Defensora.Atk * WTB) - defensaRival);
+        danio = Math.Max(danio, 0);
+
+        _view.WriteLine($"{Defensora.Nombre} ataca a {Atacante.Nombre} con {danio} de daño");
+
+        Atacante.HPactual -= danio;
+
+        if (Atacante.HPactual <= 0)
+        {
+            _view.WriteLine($"{Atacante.Nombre} ha sido derrotado!");
+        }
+    }
+
+    
 
 
 }

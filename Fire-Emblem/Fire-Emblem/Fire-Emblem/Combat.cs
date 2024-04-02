@@ -53,7 +53,7 @@ namespace Fire_Emblem
             ImprimirVentaja(unidadAtacante, unidadDefensora, ventaja);
             
             Atack ataque = new Atack(unidadAtacante, unidadDefensora, _view);
-            ataque.RealizarAtaque();
+            ataque.RealizarAtaque(ventaja);
             
             if (unidadDefensora.HPactual <= 0)
             {
@@ -63,8 +63,7 @@ namespace Fire_Emblem
             else
             {
                 
-                Atack contraataque = new Atack(unidadDefensora, unidadAtacante, _view);
-                contraataque.RealizarAtaque();
+                ataque.RealizarContraAtaque(ventaja);
                 if (unidadAtacante.HPactual <= 0)
                 {
                     atacante.Team.Characters.Remove(unidadAtacante);
