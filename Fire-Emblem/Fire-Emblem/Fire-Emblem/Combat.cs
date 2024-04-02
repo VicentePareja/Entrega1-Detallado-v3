@@ -18,7 +18,9 @@ namespace Fire_Emblem
         public void Iniciar()
         {
             int contador = 0;
-            while (contador < 3) // Limita a 3 rondas de combate
+            bool run;
+            run = true;
+            while (run) // Limita a 3 rondas de combate
             {
                 contador++;
                 if (contador % 2 == 1) // Turnos impares: Jugador 1 ataca, Jugador 2 se defiende
@@ -33,7 +35,7 @@ namespace Fire_Emblem
                 }
 
                 // Verificar si el juego debe terminar
-                if (JuegoTerminado()) break;
+                run = !JuegoTerminado();
             }
 
             // Determinar y anunciar el ganador
@@ -59,9 +61,6 @@ namespace Fire_Emblem
         ataque.RealizarContraAtaque(ventaja);
     }
     
-    
-    
-
     if (unidadAtacante.HPactual > 0 && unidadDefensora.HPactual > 0)
     {
         if (unidadAtacante.Spd >= unidadDefensora.Spd + 5)
