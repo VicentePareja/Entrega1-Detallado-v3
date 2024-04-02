@@ -73,7 +73,7 @@ namespace Fire_Emblem
         }
         else
         {
-            _view.WriteLine("Ninguna unidad puede hacer un Follow-Up.");
+            _view.WriteLine("Ninguna unidad puede hacer un follow up");
         }
     }
     
