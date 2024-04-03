@@ -20,77 +20,76 @@ namespace Fire_Emblem
             int contador = 0;
             bool run;
             run = true;
-            while (run) // Limita a 3 rondas de combate
+            while (run) 
             {
                 contador++;
-                if (contador % 2 == 1) // Turnos impares: Jugador 1 ataca, Jugador 2 se defiende
+                if (contador % 2 == 1) 
                 {
-                    // Jugador 1 ataca y Jugador 2 se defiende
                     RealizarTurno(Jugador1, Jugador2, contador);
                 }
-                else // Turnos pares: Jugador 2 ataca, Jugador 1 se defiende
+                else
                 {
-                    // Jugador 2 ataca y Jugador 1 se defiende
                     RealizarTurno(Jugador2, Jugador1, contador);
                 }
-
-                // Verificar si el juego debe terminar
                 run = !JuegoTerminado();
             }
-
-            // Determinar y anunciar el ganador
             AnunciarGanador();
         }
 
 
-        private void RealizarTurno(Player atacante, Player defensor, int turno)
-{
-    Character unidadAtacante = EscogerUnidad(atacante);
-    Character unidadDefensora = EscogerUnidad(defensor);
-
-    _view.WriteLine($"Round {turno}: {unidadAtacante.Nombre} ({atacante.Name}) comienza");
-
-    string ventaja = CalcularVentaja(unidadAtacante, unidadDefensora);
-    ImprimirVentaja(unidadAtacante, unidadDefensora, ventaja);
-    
-    Atack ataque = new Atack(unidadAtacante, unidadDefensora, _view);
-    ataque.RealizarAtaque(ventaja);
-    
-    if (unidadDefensora.HPactual > 0)
-    {
-        ataque.RealizarContraAtaque(ventaja);
-    }
-    
-    if (unidadAtacante.HPactual > 0 && unidadDefensora.HPactual > 0)
-    {
-        if (unidadAtacante.Spd >= unidadDefensora.Spd + 5)
+        private void IniciarAtaqueYContraAtaque(Character unidadAtacante, Character unidadDefensora, string ventaja
+            , int turno)
         {
+
+            Atack ataque = new Atack(unidadAtacante, unidadDefensora, _view);
             ataque.RealizarAtaque(ventaja);
+            
+            if (unidadDefensora.HPactual > 0)
+            {
+                ataque.RealizarContraAtaque(ventaja);
+            }
         }
-        else if (unidadDefensora.Spd >= unidadAtacante.Spd + 5)
-        {
-            ataque.RealizarContraAtaque(ventaja);
-        }
-        else
-        {
-            _view.WriteLine("Ninguna unidad puede hacer un follow up");
-        }
-    }
-    
-    if (unidadAtacante.HPactual <= 0)
+
+        private void VerificarYRealizarFollowUp(Character unidadAtacante, Character unidadDefensora, string ventaja)
     {
-        atacante.Team.Characters.Remove(unidadAtacante);
+        if (unidadAtacante.HPactual > 0 && unidadDefensora.HPactual > 0)
+        {
+            if (unidadAtacante.Spd >= unidadDefensora.Spd + 5)
+            {
+                new Atack(unidadAtacante, unidadDefensora, _view).RealizarAtaque(ventaja);
+            }
+            else if (unidadDefensora.Spd >= unidadAtacante.Spd + 5)
+            {
+                new Atack(unidadAtacante, unidadDefensora , _view).RealizarContraAtaque(ventaja);
+            }
+            else
+            {
+                _view.WriteLine("Ninguna unidad puede hacer un follow up");
+            }
+        }
     }
 
-    if (unidadDefensora.HPactual <= 0)
+        private void RealizarTurno(Player atacante, Player defensor, int turno)
     {
-        defensor.Team.Characters.Remove(unidadDefensora);
-    }
-    
-    _view.WriteLine($"{unidadAtacante.Nombre} ({unidadAtacante.HPactual}) : {unidadDefensora.Nombre} ({unidadDefensora.HPactual})");
-    
-}
+        Character unidadAtacante = EscogerUnidad(atacante);
+        Character unidadDefensora = EscogerUnidad(defensor);
+        _view.WriteLine($"Round {turno}: {unidadAtacante.Nombre} ({atacante.Name}) comienza");
+        string ventaja = CalcularVentaja(unidadAtacante, unidadDefensora);
+        ImprimirVentaja(unidadAtacante, unidadDefensora, ventaja);
+        IniciarAtaqueYContraAtaque(unidadAtacante, unidadDefensora, ventaja, turno);
+        VerificarYRealizarFollowUp(unidadAtacante, unidadDefensora, ventaja);
 
+        if (unidadAtacante.HPactual <= 0)
+        {
+            atacante.Team.Characters.Remove(unidadAtacante);
+        }
+
+        if (unidadDefensora.HPactual <= 0)
+        {
+            defensor.Team.Characters.Remove(unidadDefensora);
+        }
+        _view.WriteLine($"{unidadAtacante.Nombre} ({unidadAtacante.HPactual}) : {unidadDefensora.Nombre} ({unidadDefensora.HPactual})");
+    }
 
         public string CalcularVentaja(Character atacante, Character defensor)
         {
@@ -132,8 +131,6 @@ namespace Fire_Emblem
             }
         }
 
-
-
         private void ImprimirOpcionesDePersonajes(Player jugador)
         {
             // Asumiendo que "Name" es una propiedad pública de Player para obtener su nombre
@@ -169,7 +166,6 @@ namespace Fire_Emblem
 
         private bool JuegoTerminado()
         {
-            // Verificar si alguno de los jugadores ha perdido todas sus unidades
             return Jugador1.Team.Characters.Count == 0 || Jugador2.Team.Characters.Count == 0;
         }
 
