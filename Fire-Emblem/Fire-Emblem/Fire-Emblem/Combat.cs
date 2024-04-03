@@ -69,27 +69,41 @@ namespace Fire_Emblem
         }
     }
 
+        private (Character unidadAtacante, Character unidadDefensora, string ventaja) PrepararAtaque(Player atacante, Player defensor, int turno)
+        {
+            Character unidadAtacante = EscogerUnidad(atacante);
+            Character unidadDefensora = EscogerUnidad(defensor);
+            _view.WriteLine($"Round {turno}: {unidadAtacante.Nombre} ({atacante.Name}) comienza");
+            string ventaja = CalcularVentaja(unidadAtacante, unidadDefensora);
+            ImprimirVentaja(unidadAtacante, unidadDefensora, ventaja);
+    
+            return (unidadAtacante, unidadDefensora, ventaja);
+        }
+        
+        private void EjecutarCombate(Player atacante, Player defensor, Character unidadAtacante
+            , Character unidadDefensora, string ventaja, int turno)
+        {
+            IniciarAtaqueYContraAtaque(unidadAtacante, unidadDefensora, ventaja, turno);
+            VerificarYRealizarFollowUp(unidadAtacante, unidadDefensora, ventaja);
+
+            if (unidadAtacante.HPactual <= 0)
+            {
+                atacante.Team.Characters.Remove(unidadAtacante);
+            }
+
+            if (unidadDefensora.HPactual <= 0)
+            {
+                defensor.Team.Characters.Remove(unidadDefensora);
+            }
+            _view.WriteLine($"{unidadAtacante.Nombre} ({unidadAtacante.HPactual}) : {unidadDefensora.Nombre} ({unidadDefensora.HPactual})");
+        }
+        
         private void RealizarTurno(Player atacante, Player defensor, int turno)
-    {
-        Character unidadAtacante = EscogerUnidad(atacante);
-        Character unidadDefensora = EscogerUnidad(defensor);
-        _view.WriteLine($"Round {turno}: {unidadAtacante.Nombre} ({atacante.Name}) comienza");
-        string ventaja = CalcularVentaja(unidadAtacante, unidadDefensora);
-        ImprimirVentaja(unidadAtacante, unidadDefensora, ventaja);
-        IniciarAtaqueYContraAtaque(unidadAtacante, unidadDefensora, ventaja, turno);
-        VerificarYRealizarFollowUp(unidadAtacante, unidadDefensora, ventaja);
-
-        if (unidadAtacante.HPactual <= 0)
         {
-            atacante.Team.Characters.Remove(unidadAtacante);
+            var (unidadAtacante, unidadDefensora, ventaja) = PrepararAtaque(atacante, defensor, turno);
+            EjecutarCombate(atacante, defensor, unidadAtacante, unidadDefensora, ventaja, turno);
         }
-
-        if (unidadDefensora.HPactual <= 0)
-        {
-            defensor.Team.Characters.Remove(unidadDefensora);
-        }
-        _view.WriteLine($"{unidadAtacante.Nombre} ({unidadAtacante.HPactual}) : {unidadDefensora.Nombre} ({unidadDefensora.HPactual})");
-    }
+        
 
         public string CalcularVentaja(Character atacante, Character defensor)
         {
@@ -143,22 +157,20 @@ namespace Fire_Emblem
 
         private Character EscogerUnidad(Player jugador)
         {
-            ImprimirOpcionesDePersonajes(jugador); // Usa el nuevo método para imprimir opciones
-            int eleccion = -1; // Inicializa elección como inválida
+            ImprimirOpcionesDePersonajes(jugador); 
+            int eleccion = -1; 
             do
             {
                 string input = _view.ReadLine();
                 if (int.TryParse(input, out eleccion) && eleccion >= 0 && eleccion < jugador.Team.Characters.Count)
                 {
-                    // Si la elección es válida, sale del bucle
                     break;
                 }
                 else
                 {
-                    // Elección inválida, pide al usuario que elija de nuevo
                     _view.WriteLine("Elección inválida. Por favor, elige de nuevo.");
                 }
-            } while (true); // Continúa hasta que se reciba una entrada válida
+            } while (true); 
 
             return jugador.Team.Characters[eleccion];
         }

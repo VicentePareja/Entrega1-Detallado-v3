@@ -85,7 +85,8 @@ namespace Fire_Emblem
 
         public bool ValidTeams(string selectedFile)
         {
-            var (lines, isPlayer1, team1, team2, team1Populated, team2Populated, currentTeamNames) = InitializeTeams(selectedFile);
+            var (lines, isPlayer1, team1, team2, team1Populated
+                , team2Populated, currentTeamNames) = InitializeTeams(selectedFile);
             
             (isPlayer1, team1Populated, team2Populated) = ProcessTeamLines(lines, isPlayer1, team1, team2, currentTeamNames);
             
@@ -167,39 +168,51 @@ namespace Fire_Emblem
             return valid;
         }
         
+        private Character CreateCharacterFromLine(string characterLine)
+        {
+            var parts = characterLine.Split(" (", 2);
+            var characterName = parts[0];
+            var skillsText = parts.Length > 1 ? parts[1].TrimEnd(')') : string.Empty;
+
+            var character = new Character { Nombre = characterName };
+
+            if (!string.IsNullOrEmpty(skillsText))
+            {
+                var skillNames = skillsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var skillName in skillNames)
+                {
+                    var trimmedSkillName = skillName.Trim();
+                    character.AddSkill(new Skill(trimmedSkillName, "Descripción no proporcionada")); 
+                }
+            }
+
+            return character;
+        }
+
+        private bool ValidateTeam(Team team)
+        {
+            return team.EsEquipoValido();
+        }
+
+        private void ClearTeamCharacters(Team team)
+        {
+            team.Characters.Clear();
+        }
+
         private bool ValidateAndClearCurrentTeam(List<string> characterNames, Team team)
         {
-            foreach (var fullCharacterLine in characterNames)
+            foreach (var characterLine in characterNames)
             {
-               
-                var parts = fullCharacterLine.Split(" (", 2);
-                var characterName = parts[0];
-                var skillsText = parts.Length > 1 ? parts[1].TrimEnd(')') : string.Empty;
-        
-               
-                var character = new Character { Nombre = characterName };
-
-               
-                if (!string.IsNullOrEmpty(skillsText))
-                {
-                    var skillNames = skillsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (var skillName in skillNames)
-                    {
-                        var trimmedSkillName = skillName.Trim();
-                        character.AddSkill(new Skill(trimmedSkillName, "Descripción no proporcionada")); 
-                    }
-                }
-
-                
+                var character = CreateCharacterFromLine(characterLine);
                 team.Characters.Add(character);
             }
-            
-            bool isValid = team.EsEquipoValido();
-            
-            team.Characters.Clear();
+
+            bool isValid = ValidateTeam(team);
+            ClearTeamCharacters(team);
 
             return isValid;
         }
+
         
         public void ChooseCharacters(string selectedFilePath)
         {
@@ -224,45 +237,70 @@ namespace Fire_Emblem
         }
 
 
-        private void AssignCharacterToTeam(string characterLine, Team team)
+        private Character CloneCharacter(string characterName)
         {
-            var parts = characterLine.Split(" (", 2);
-            var characterName = parts[0];
-            var skillsText = parts.Length > 1 ? parts[1].TrimEnd(')') : string.Empty;
-
             var originalCharacter = characters.FirstOrDefault(c => c.Nombre == characterName);
             if (originalCharacter != null)
             {
-                var newCharacter = new Character
+                return new Character
                 {
                     Nombre = originalCharacter.Nombre,
                     Arma = originalCharacter.Arma,
                     Género = originalCharacter.Género,
                     HPmáximo = originalCharacter.HPmáximo,
-                    HPactual = originalCharacter.HPmáximo, 
+                    HPactual = originalCharacter.HPmáximo,
                     Atk = originalCharacter.Atk,
                     Spd = originalCharacter.Spd,
                     Def = originalCharacter.Def,
                     Res = originalCharacter.Res,
                 };
-                
-                if (!string.IsNullOrEmpty(skillsText))
-                {
-                    var skillNames = skillsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (var skillName in skillNames)
-                    {
-                        var trimmedSkillName = skillName.Trim();
-                        newCharacter.AddSkill(new Skill(trimmedSkillName, "Descripción no proporcionada"));
-                    }
-                }
+            }
+            
+            return null;
+        }
 
+        private Character CreateOrCloneCharacter(string characterLine)
+        {
+            var parts = characterLine.Split(" (", 2);
+            var characterName = parts[0];
+            var skillsText = parts.Length > 1 ? parts[1].TrimEnd(')') : string.Empty;
+
+            var newCharacter = CloneCharacter(characterName);
+            if (newCharacter != null)
+            {
+                AssignSkillsToCharacter(newCharacter, skillsText);
+            }
+
+            return newCharacter;
+        }
+
+        private void AssignSkillsToCharacter(Character character, string skillsText)
+        {
+            if (!string.IsNullOrEmpty(skillsText))
+            {
+                var skillNames = skillsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var skillName in skillNames)
+                {
+                    var trimmedSkillName = skillName.Trim();
+                    character.AddSkill(new Skill(trimmedSkillName, "Descripción no proporcionada"));
+                }
+            }
+        }
+
+
+        private void AssignCharacterToTeam(string characterLine, Team team)
+        {
+            var newCharacter = CreateOrCloneCharacter(characterLine);
+            if (newCharacter != null)
+            {
                 team.Characters.Add(newCharacter);
             }
             else
             {
-                _view.WriteLine($"Personaje no encontrado: {characterName}");
+                _view.WriteLine($"Personaje no encontrado: {characterLine.Split(" (", 2)[0]}");
             }
         }
+
         
 
         public void ImportarCharacters()
