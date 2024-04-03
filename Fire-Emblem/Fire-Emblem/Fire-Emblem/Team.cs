@@ -66,6 +66,7 @@ public class Team
     
     public bool EsEquipoValido()
     {
+        //ImprimirEquipo();
   
         if (Characters.Count < 1 || Characters.Count > 3)
         {

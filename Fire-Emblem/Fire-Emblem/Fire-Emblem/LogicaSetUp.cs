@@ -85,69 +85,86 @@ namespace Fire_Emblem
 
         public bool ValidTeams(string selectedFile)
         {
-            var lines = File.ReadAllLines(selectedFile);
-            bool isPlayer1 = true;
-
-            Team team1 = new Team();
-            Team team2 = new Team();
-            bool team1Populated = false; 
-            bool team2Populated = false; 
-
-            List<string> currentTeamNames = new List<string>();
-
+            var (lines, isPlayer1, team1, team2, team1Populated, team2Populated, currentTeamNames) = InitializeTeams(selectedFile);
+            
+            (isPlayer1, team1Populated, team2Populated) = ProcessTeamLines(lines, isPlayer1, team1, team2, currentTeamNames);
+            
+            return CheckFinalTeamsPopulated(currentTeamNames, isPlayer1, team1, team2, team1Populated, team2Populated);
+        }
+        
+        private (bool isPlayer1, bool team1Populated, bool team2Populated) ProcessTeamLines(string[] lines
+            , bool isPlayer1, Team team1, Team team2, List<string> currentTeamNames)
+        {
+            bool team1Populated = false;
+            bool team2Populated = false;
+        
             foreach (var line in lines)
             {
                 if (line == "Player 1 Team")
                 {
-                    
                     if (!isPlayer1 && currentTeamNames.Any())
                     {
-                        team2Populated = true; 
-                        bool valid = ValidateAndClearCurrentTeam(currentTeamNames, team2);
-                        if (!valid) return false;
-                        currentTeamNames.Clear();
+                        team2Populated = true;
+                        if (!FinalizeTeam(currentTeamNames, team2)) return (isPlayer1, team1Populated, team2Populated);
                     }
                     isPlayer1 = true;
                 }
                 else if (line == "Player 2 Team")
                 {
-                    
                     if (isPlayer1 && currentTeamNames.Any())
                     {
-                        team1Populated = true; 
-                        bool valid = ValidateAndClearCurrentTeam(currentTeamNames, team1);
-                        if (!valid) return false;
-                        currentTeamNames.Clear();
+                        team1Populated = true;
+                        if (!FinalizeTeam(currentTeamNames, team1)) return (isPlayer1, team1Populated, team2Populated);
                     }
                     isPlayer1 = false;
                 }
                 else
                 {
-                    currentTeamNames.Add(line); 
+                    currentTeamNames.Add(line);
                 }
             }
+        
+            return (isPlayer1, team1Populated, team2Populated);
+        }
 
-            
+
+        private bool CheckFinalTeamsPopulated(List<string> currentTeamNames, bool isPlayer1
+            , Team team1, Team team2, bool team1Populated, bool team2Populated)
+        {
             if (currentTeamNames.Any())
             {
                 if (isPlayer1)
                 {
-                    team1Populated = true; 
+                    team1Populated = true;
                 }
                 else
                 {
-                    team2Populated = true; 
+                    team2Populated = true;
                 }
-                bool valid = ValidateAndClearCurrentTeam(currentTeamNames, isPlayer1 ? team1 : team2);
-                if (!valid) return false;
-            }
-            
-            if (!team1Populated || !team2Populated)
-            {
-                return false;
+                if (!FinalizeTeam(currentTeamNames, isPlayer1 ? team1 : team2)) return false;
             }
 
-            return true; 
+            return team1Populated && team2Populated;
+        }
+
+        private (string[] lines, bool isPlayer1, Team team1, Team team2, bool team1Populated
+            , bool team2Populated, List<string> currentTeamNames) InitializeTeams(string selectedFile)
+        {
+            var lines = File.ReadAllLines(selectedFile);
+            bool isPlayer1 = true;
+            Team team1 = new Team();
+            Team team2 = new Team();
+            bool team1Populated = false;
+            bool team2Populated = false;
+            List<string> currentTeamNames = new List<string>();
+            return (lines, isPlayer1, team1, team2, team1Populated, team2Populated, currentTeamNames);
+        }
+
+        private bool FinalizeTeam(List<string> currentTeamNames, Team team)
+        {
+            bool valid = ValidateAndClearCurrentTeam(currentTeamNames, team);
+            currentTeamNames.Clear();
+            return valid;
         }
         
         private bool ValidateAndClearCurrentTeam(List<string> characterNames, Team team)
@@ -176,10 +193,8 @@ namespace Fire_Emblem
                 
                 team.Characters.Add(character);
             }
-
             
             bool isValid = team.EsEquipoValido();
-
             
             team.Characters.Clear();
 
