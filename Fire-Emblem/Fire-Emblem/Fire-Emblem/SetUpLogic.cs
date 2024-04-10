@@ -6,7 +6,7 @@ using Fire_Emblem_View;
 
 namespace Fire_Emblem
 {
-    public class LogicaSetUp
+    public class SetUpLogic
     {
         private View _view;
         private string _teamsFolder;
@@ -15,7 +15,7 @@ namespace Fire_Emblem
         private Player _player1;
         private Player _player2;
 
-        public LogicaSetUp(View view, string teamsFolder)
+        public SetUpLogic(View view, string teamsFolder)
         {
             _view = view;
             _teamsFolder = teamsFolder;
@@ -23,13 +23,13 @@ namespace Fire_Emblem
             
         }
 
-        public bool CargarEquipos(Player player1, Player player2)
+        public bool LoadTeams(Player player1, Player player2)
         {
             _player1 = player1;
             _player2 = player2;
     
-            MostrarArchivosDisponibles();
-            string selectedFile = SeleccionarArchivo();
+            ShowAvailableFiles();
+            string selectedFile = SelectFile();
     
             if (selectedFile == null)
             {
@@ -37,8 +37,8 @@ namespace Fire_Emblem
                 return false;
             }
     
-            ImportarCharacters();
-            ImportarSkills();
+            ImportCharacters();
+            ImportSkills();
     
             if (ValidTeams(selectedFile))
             {
@@ -52,7 +52,7 @@ namespace Fire_Emblem
             }
         }
 
-        private void MostrarArchivosDisponibles()
+        private void ShowAvailableFiles()
         {
             _view.WriteLine("Elige un archivo para cargar los equipos");
             var files = Directory.GetFiles(_teamsFolder, "*.txt");
@@ -68,7 +68,7 @@ namespace Fire_Emblem
             }
         }
 
-        private string SeleccionarArchivo()
+        private string SelectFile()
         {
             string input = _view.ReadLine();
             var files = Directory.GetFiles(_teamsFolder, "*.txt");
@@ -174,7 +174,7 @@ namespace Fire_Emblem
             var characterName = parts[0];
             var skillsText = parts.Length > 1 ? parts[1].TrimEnd(')') : string.Empty;
 
-            var character = new Character { Nombre = characterName };
+            var character = new Character { Name = characterName };
 
             if (!string.IsNullOrEmpty(skillsText))
             {
@@ -191,7 +191,7 @@ namespace Fire_Emblem
 
         private bool ValidateTeam(Team team)
         {
-            return team.EsEquipoValido();
+            return team.IsTeamValid();
         }
 
         private void ClearTeamCharacters(Team team)
@@ -239,16 +239,16 @@ namespace Fire_Emblem
 
         private Character CloneCharacter(string characterName)
         {
-            var originalCharacter = characters.FirstOrDefault(c => c.Nombre == characterName);
+            var originalCharacter = characters.FirstOrDefault(c => c.Name == characterName);
             if (originalCharacter != null)
             {
                 return new Character
                 {
-                    Nombre = originalCharacter.Nombre,
-                    Arma = originalCharacter.Arma,
-                    Género = originalCharacter.Género,
-                    HPmáximo = originalCharacter.HPmáximo,
-                    HPactual = originalCharacter.HPmáximo,
+                    Name = originalCharacter.Name,
+                    Weapon = originalCharacter.Weapon,
+                    Gender = originalCharacter.Gender,
+                    MaxHP = originalCharacter.MaxHP,
+                    CurrentHP = originalCharacter.MaxHP,
                     Atk = originalCharacter.Atk,
                     Spd = originalCharacter.Spd,
                     Def = originalCharacter.Def,
@@ -309,9 +309,7 @@ namespace Fire_Emblem
             }
         }
 
-        
-
-        public void ImportarCharacters()
+        public void ImportCharacters()
         {
             
             string jsonPath = Path.Combine(_teamsFolder, "../..", "characters.json"); 
@@ -334,7 +332,7 @@ namespace Fire_Emblem
             }
         }
         
-        public void ImportarSkills()
+        public void ImportSkills()
         {
             string jsonPath = Path.Combine(_teamsFolder, "../..", "skills.json");
 

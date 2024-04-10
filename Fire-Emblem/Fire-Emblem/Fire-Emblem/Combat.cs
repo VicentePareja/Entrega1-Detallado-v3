@@ -1,49 +1,67 @@
 ﻿using Fire_Emblem_View;
 namespace Fire_Emblem
-
 {
     public class Combat
     {
-        private readonly Character _atacante;
-        private readonly Character _defensor;
-        private readonly string _ventaja;
+        private readonly Character _attacker;
+        private readonly Character _defender;
+        private readonly string _advantage;
         private readonly View _view;
 
-        public Combat(Character atacante, Character defensor, string ventaja, View view)
+        public Combat(Character attacker, Character defender, string advantage, View view)
         {
-            _atacante = atacante;
-            _defensor = defensor;
-            _ventaja = ventaja;
+            _attacker = attacker;
+            _defender = defender;
+            _advantage = advantage;
             _view = view;
         }
 
-        public void Iniciar()
+        public void Start()
         {
-            Atack ataque = new Atack(_atacante, _defensor, _view);
-            ataque.RealizarAtaque(_ventaja);
-            
-            if (_defensor.HPactual > 0)
+            PerformInitialAttack();
+            PerformCounterAttack();
+            PerformFollowUp();
+            PrintFinalState();
+        }
+
+        private void PerformInitialAttack()
+        {
+            Attack attack = new Attack(_attacker, _defender, _view);
+            attack.PerformAttack(_advantage);
+        }
+
+        private void PerformCounterAttack()
+        {
+            if (_defender.CurrentHP > 0)
             {
-                ataque.RealizarContraAtaque(_ventaja);
+                Attack counterAttack = new Attack(_attacker, _defender, _view);
+                counterAttack.PerformCounterAttack(_advantage);
             }
-            
-            if (_atacante.HPactual > 0 && _defensor.HPactual > 0)
+        }
+
+        private void PerformFollowUp()
+        {
+            if (_attacker.CurrentHP > 0 && _defender.CurrentHP > 0)
             {
-                if (_atacante.Spd >= _defensor.Spd + 5)
+                Attack followUpAttack = new Attack(_attacker, _defender, _view);
+                if (_attacker.Spd >= _defender.Spd + 5)
                 {
-                    new Atack(_atacante, _defensor, _view).RealizarAtaque(_ventaja);
+                    followUpAttack.PerformAttack(_advantage);
                 }
-                else if (_defensor.Spd >= _atacante.Spd + 5)
+                else if (_defender.Spd >= _attacker.Spd + 5)
                 {
-                    new Atack(_atacante, _defensor, _view).RealizarContraAtaque(_ventaja);
+                    followUpAttack.PerformCounterAttack(_advantage);
                 }
                 else
                 {
                     _view.WriteLine("Ninguna unidad puede hacer un follow up");
                 }
             }
-            
-            _view.WriteLine($"{_atacante.Nombre} ({_atacante.HPactual}) : {_defensor.Nombre} ({_defensor.HPactual})");
+        }
+
+        private void PrintFinalState()
+        {
+            _view.WriteLine($"{_attacker.Name} ({_attacker.CurrentHP}) : {_defender.Name} ({_defender.CurrentHP})");
         }
     }
 }

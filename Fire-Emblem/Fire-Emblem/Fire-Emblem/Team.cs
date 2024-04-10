@@ -1,7 +1,6 @@
 ﻿namespace Fire_Emblem;
 
 public class Team
-
 {
     public List<Character> Characters { get; set; }
 
@@ -10,16 +9,16 @@ public class Team
         Characters = new List<Character>();
     }
     
-    public void ImprimirEquipo()
+    public void PrintTeam()
     {
         Console.WriteLine("Detalles del Equipo:");
         foreach (var character in Characters)
         {
-            Console.WriteLine($"Nombre: {character.Nombre}");
-            Console.WriteLine($"Arma: {character.Arma}");
-            Console.WriteLine($"Género: {character.Género}");
-            Console.WriteLine($"HP Máximo: {character.HPmáximo}");
-            Console.WriteLine($"HP Actual: {character.HPactual}");
+            Console.WriteLine($"Nombre: {character.Name}");
+            Console.WriteLine($"Arma: {character.Weapon}");
+            Console.WriteLine($"Género: {character.Gender}");
+            Console.WriteLine($"HP Máximo: {character.MaxHP}");
+            Console.WriteLine($"HP Actual: {character.CurrentHP}");
             Console.WriteLine($"Ataque (Atk): {character.Atk}");
             Console.WriteLine($"Velocidad (Spd): {character.Spd}");
             Console.WriteLine($"Defensa (Def): {character.Def}");
@@ -41,13 +40,12 @@ public class Team
         }
     }
 
-
-    public void ImprimirEquipoHabilidades()
+    public void PrintTeamSkills()
     {
         Console.WriteLine("Detalles del Equipo:");
         foreach (var character in Characters)
         {
-            Console.WriteLine($"Nombre: {character.Nombre}, HP Máximo: {character.HPmáximo}, Ataque: {character.Atk}");
+            Console.WriteLine($"Nombre: {character.Name}, HP Máximo: {character.MaxHP}, Ataque: {character.Atk}");
             Console.WriteLine("Habilidades:");
             if (character.Skills != null && character.Skills.Count > 0)
             {
@@ -64,25 +62,25 @@ public class Team
         }
     }
     
-    public bool EsEquipoValido()
+    public bool IsTeamValid()
     {
-        //ImprimirEquipo();
+        //PrintTeam();
   
         if (Characters.Count < 1 || Characters.Count > 3)
         {
             return false; 
         }
         
-        HashSet<string> nombresUnicos = new HashSet<string>();
+        HashSet<string> uniqueNames = new HashSet<string>();
         foreach (var character in Characters)
         {
             
-            if (!nombresUnicos.Add(character.Nombre))
+            if (!uniqueNames.Add(character.Name))
             {
                 return false; 
             }
             
-            if (!SonHabilidadesValidas(character))
+            if (!AreSkillsValid(character))
             {
                 return false; 
             }
@@ -91,7 +89,7 @@ public class Team
         return true;
     }
 
-    private bool SonHabilidadesValidas(Character character)
+    private bool AreSkillsValid(Character character)
     {
         
         if (character.Skills.Count > 2)
@@ -99,10 +97,10 @@ public class Team
             return false; 
         }
         
-        HashSet<string> habilidadesUnicas = new HashSet<string>();
+        HashSet<string> uniqueSkills = new HashSet<string>();
         foreach (var skill in character.Skills)
         {
-            if (!habilidadesUnicas.Add(skill.Name))
+            if (!uniqueSkills.Add(skill.Name))
             {
                 return false; 
             }
@@ -110,13 +108,12 @@ public class Team
 
         return true;
     }
-
     
-    public void ImprimirOpcionesDePersonajes()
+    public void PrintCharacterOptions()
     {
         for (int i = 0; i < Characters.Count; i++)
         {
-            Console.WriteLine($"{i}: {Characters[i].Nombre}"); 
+            Console.WriteLine($"{i}: {Characters[i].Name}"); 
         }
     }
 

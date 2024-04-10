@@ -12,7 +12,7 @@ public class Skill
         Description = description;
     }
     
-    public void ImprimirDetalles()
+    public void PrintDetails()
     {
         Console.WriteLine($"Habilidad: {Name}\nDescripción: {Description}\n");
     }

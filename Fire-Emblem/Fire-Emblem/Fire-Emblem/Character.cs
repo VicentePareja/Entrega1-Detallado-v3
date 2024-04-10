@@ -6,15 +6,15 @@ namespace Fire_Emblem;
 
 public class Character
 {
-    [JsonPropertyName("Name")] public string Nombre { get; set; }
-    [JsonPropertyName("Weapon")] public string Arma { get; set; }
-    [JsonPropertyName("Gender")] public string Género { get; set; }
-    [JsonPropertyName("HP")] public int HPmáximo { get; set; }
-    private int _hpActual;
-    public int HPactual 
+    [JsonPropertyName("Name")] public string Name { get; set; }
+    [JsonPropertyName("Weapon")] public string Weapon { get; set; }
+    [JsonPropertyName("Gender")] public string Gender { get; set; }
+    [JsonPropertyName("HP")] public int MaxHP { get; set; }
+    private int _currentHP;
+    public int CurrentHP
     { 
-        get => _hpActual; 
-        set => _hpActual = Math.Max(value, 0); 
+        get => _currentHP; 
+        set => _currentHP = Math.Max(value, 0); 
     }
     [JsonConverter(typeof(StringToIntConverter))] [JsonPropertyName("Atk")] public int Atk { get; set; }
     [JsonConverter(typeof(StringToIntConverter))] [JsonPropertyName("Spd")] public int Spd { get; set; }

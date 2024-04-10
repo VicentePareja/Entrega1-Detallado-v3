@@ -20,12 +20,12 @@ namespace Fire_Emblem
         public void Play()
         {
            
-            LogicaSetUp logica = new LogicaSetUp(_view, _teamsFolder);
+            SetUpLogic logic = new SetUpLogic(_view, _teamsFolder);
 
-            if (logica.CargarEquipos(_player1, _player2))
+            if (logic.LoadTeams(_player1, _player2))
             {
                 Battle battle = new Battle(_player1, _player2, _view);
-                battle.Iniciar();
+                battle.Start();
             }
             
         }

@@ -1,51 +1,48 @@
 ﻿using Fire_Emblem_View;
 namespace Fire_Emblem;
 
-public class Atack
+public class Attack
 {
-    public Character Atacante { get; private set; }
-    public Character Defensora { get; private set; }
+    public Character Attacker { get; private set; }
+    public Character Defender { get; private set; }
     private View _view;
 
-    public Atack(Character atacante, Character defensora, View view)
+    public Attack(Character attacker, Character defender, View view)
     {
-        Atacante = atacante;
-        Defensora = defensora;
+        Attacker = attacker;
+        Defender = defender;
         _view = view;
     }
 
-    public void RealizarAtaque(string ventaja)
+    public void PerformAttack(string advantage)
     {
     
-        double WTB = ventaja == "atacante" ? 1.2 : ventaja == "defensor" ? 0.8 : 1.0;
+        double weaponTriangleBonus = advantage == "atacante" ? 1.2 : advantage == "defensor" ? 0.8 : 1.0;
         
-        int defensaRival = Atacante.Arma == "Magic" ? Defensora.Res : Defensora.Def;
+        int enemyDefense = Attacker.Weapon == "Magic" ? Defender.Res : Defender.Def;
         
-        int danio = (int)((Atacante.Atk * WTB) - defensaRival);
-        danio = Math.Max(danio, 0);
+        int damage = (int)((Attacker.Atk * weaponTriangleBonus) - enemyDefense);
+        damage = Math.Max(damage, 0);
 
-        _view.WriteLine($"{Atacante.Nombre} ataca a {Defensora.Nombre} con {danio} de daño");
+        _view.WriteLine($"{Attacker.Name} ataca a {Defender.Name} con {damage} de daño");
 
-        Defensora.HPactual -= danio;
+        Defender.CurrentHP -= damage;
         
     }
     
-    public void RealizarContraAtaque(string ventaja)
+    public void PerformCounterAttack(string advantage)
     {
        
-        double WTB = ventaja == "defensor" ? 1.2 : ventaja == "atacante" ? 0.8 : 1.0;
+        double weaponTriangleBonus = advantage == "defensor" ? 1.2 : advantage == "atacante" ? 0.8 : 1.0;
         
-        int defensaRival = Defensora.Arma == "Magic" ? Atacante.Res : Atacante.Def;
+        int enemyDefense = Defender.Weapon == "Magic" ? Attacker.Res : Attacker.Def;
         
-        int danio = (int)((Defensora.Atk * WTB) - defensaRival);
-        danio = Math.Max(danio, 0);
+        int damage = (int)((Defender.Atk * weaponTriangleBonus) - enemyDefense);
+        damage = Math.Max(damage, 0);
 
-        _view.WriteLine($"{Defensora.Nombre} ataca a {Atacante.Nombre} con {danio} de daño");
+        _view.WriteLine($"{Defender.Name} ataca a {Attacker.Name} con {damage} de daño");
 
-        Atacante.HPactual -= danio;
+        Attacker.CurrentHP -= damage;
 
     }
-    
-
 }
-
