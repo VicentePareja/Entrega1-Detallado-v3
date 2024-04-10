@@ -24,6 +24,7 @@ namespace Fire_Emblem
 
             if (logica.CargarEquipos(_player1, _player2))
             {
+                _player2.Team.ImprimirEquipoHabilidades();
                 Combat combate = new Combat(_player1, _player2, _view);
                 combate.Iniciar();
             }

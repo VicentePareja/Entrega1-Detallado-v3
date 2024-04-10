@@ -282,7 +282,15 @@ namespace Fire_Emblem
                 foreach (var skillName in skillNames)
                 {
                     var trimmedSkillName = skillName.Trim();
-                    character.AddSkill(new Skill(trimmedSkillName, "Descripción no proporcionada"));
+                    var skill = skills.FirstOrDefault(s => s.Name.Equals(trimmedSkillName, StringComparison.OrdinalIgnoreCase));
+                    if (skill != null)
+                    {
+                        character.AddSkill(new Skill(trimmedSkillName, skill.Description));
+                    }
+                    else
+                    {
+                        character.AddSkill(new Skill(trimmedSkillName, "Descripción no proporcionada"));
+                    }
                 }
             }
         }
