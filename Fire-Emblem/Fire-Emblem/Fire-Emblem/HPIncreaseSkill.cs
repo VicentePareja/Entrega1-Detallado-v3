@@ -2,8 +2,8 @@
     public class HPIncreaseSkill : Skill {
         public int HPIncrease { get; private set; }
 
-        public HPIncreaseSkill(string name, string description, int hpIncrease) : base(name, description) {
-            HPIncrease = hpIncrease;
+        public HPIncreaseSkill(string name, string description) : base(name, description) {
+            HPIncrease = 15;
         }
 
         public override void ApplyEffect(Combat combat, Character owner) {

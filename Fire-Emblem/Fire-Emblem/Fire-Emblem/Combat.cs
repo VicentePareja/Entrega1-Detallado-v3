@@ -3,8 +3,8 @@ namespace Fire_Emblem
 {
     public class Combat
     {
-        private readonly Character _attacker;
-        private readonly Character _defender;
+        public readonly Character _attacker;
+        public readonly Character _defender;
         private readonly string _advantage;
         private readonly View _view;
 
@@ -19,9 +19,12 @@ namespace Fire_Emblem
         public void Start()
         {
             ApplySkills();
+            PrintBonuses(_attacker);
+            PrintBonuses(_defender);
             PerformInitialAttack();
             PerformCounterAttack();
             PerformFollowUp();
+            ClearTemporaryBonuses();
             PrintFinalState();
         }
 
@@ -67,6 +70,24 @@ namespace Fire_Emblem
                     _view.WriteLine("Ninguna unidad puede hacer un follow up");
                 }
             }
+        }
+        
+        private void PrintBonuses(Character character)
+        {
+            string[] statsOrder = { "Atk", "Spd", "Def", "Res" };
+            foreach (var stat in statsOrder)
+            {
+                if (character.TemporaryBonuses.TryGetValue(stat, out int bonus) && bonus != 0)
+                {
+                    _view.WriteLine($"{character.Name} obtiene {stat}{bonus:+#;-#;+0}");
+                }
+            }
+        }
+        
+        private void ClearTemporaryBonuses()
+        {
+            _attacker.CleanBonuses();
+            _defender.CleanBonuses();
         }
 
         private void PrintFinalState()
