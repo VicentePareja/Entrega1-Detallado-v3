@@ -18,10 +18,21 @@ namespace Fire_Emblem
 
         public void Start()
         {
+            ApplySkills();
             PerformInitialAttack();
             PerformCounterAttack();
             PerformFollowUp();
             PrintFinalState();
+        }
+
+        private void ApplySkills()
+        {
+            foreach (var skill in _attacker.Skills) {
+                skill.ApplyEffect(_attacker);
+            }
+            foreach (var skill in _defender.Skills) {
+                skill.ApplyEffect(_defender);
+            }
         }
 
         private void PerformInitialAttack()

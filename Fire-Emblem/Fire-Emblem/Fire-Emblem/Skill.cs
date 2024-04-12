@@ -12,6 +12,12 @@ public class Skill
         Description = description;
     }
     
+    public virtual void ApplyEffect(Character character)
+    {
+        // Este método puede ser sobrescrito por clases derivadas.
+        Console.WriteLine($"Applying {Name} to {character.Name}");
+    }
+    
     public void PrintDetails()
     {
         Console.WriteLine($"Habilidad: {Name}\nDescripción: {Description}\n");
