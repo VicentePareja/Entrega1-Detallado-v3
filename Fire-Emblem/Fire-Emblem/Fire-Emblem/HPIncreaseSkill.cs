@@ -6,9 +6,10 @@
             HPIncrease = hpIncrease;
         }
 
-        public override void ApplyEffect(Character character) {
-            character.MaxHP += HPIncrease;
-            character.CurrentHP += HPIncrease;
+        public override void ApplyEffect(Combat combat, Character owner) {
+            owner.MaxHP += HPIncrease;
+            owner.CurrentHP += HPIncrease;
+            Console.WriteLine($"{owner.Name}'s HP increased by {HPIncrease}");
         }
     }
 }

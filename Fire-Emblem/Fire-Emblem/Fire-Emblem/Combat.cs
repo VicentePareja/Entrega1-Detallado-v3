@@ -25,13 +25,12 @@ namespace Fire_Emblem
             PrintFinalState();
         }
 
-        private void ApplySkills()
-        {
+        private void ApplySkills() {
             foreach (var skill in _attacker.Skills) {
-                skill.ApplyEffect(_attacker);
+                skill.ApplyEffect(this, _attacker);
             }
             foreach (var skill in _defender.Skills) {
-                skill.ApplyEffect(_defender);
+                skill.ApplyEffect(this, _defender);
             }
         }
 
