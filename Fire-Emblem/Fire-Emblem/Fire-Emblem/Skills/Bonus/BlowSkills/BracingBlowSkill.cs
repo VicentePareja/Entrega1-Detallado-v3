@@ -1,5 +1,5 @@
 ﻿namespace Fire_Emblem {
-    public class BracingBlowSkill : Skill {
+    public class BracingBlowSkill : BlowSkill {
         public int DefBonus { get; private set; }
         public int ResBonus { get; private set; }
 
@@ -8,11 +8,9 @@
             ResBonus = 6;
         }
 
-        public override void ApplyEffect(Combat combat, Character owner) {
-            if (combat._attacker == owner) {
-                owner.AddTemporaryBonus("Def", DefBonus);
-                owner.AddTemporaryBonus("Res", ResBonus);
-            }
+        protected override void ApplySpecificEffect(Character owner) {
+            owner.AddTemporaryBonus("Def", DefBonus);
+            owner.AddTemporaryBonus("Res", ResBonus);
         }
     }
 }

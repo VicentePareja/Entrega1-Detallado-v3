@@ -1,5 +1,5 @@
 ﻿namespace Fire_Emblem {
-    public class SteadyBlowSkill : Skill {
+    public class SteadyBlowSkill : BlowSkill {
         public int SpdBonus { get; private set; }
         public int DefBonus { get; private set; }
 
@@ -8,11 +8,9 @@
             DefBonus = 6;
         }
 
-        public override void ApplyEffect(Combat combat, Character owner) {
-            if (combat._attacker == owner) {
-                owner.AddTemporaryBonus("Spd", SpdBonus);
-                owner.AddTemporaryBonus("Def", DefBonus);
-            }
+        protected override void ApplySpecificEffect(Character owner) {
+            owner.AddTemporaryBonus("Spd", SpdBonus);
+            owner.AddTemporaryBonus("Def", DefBonus);
         }
     }
 }
