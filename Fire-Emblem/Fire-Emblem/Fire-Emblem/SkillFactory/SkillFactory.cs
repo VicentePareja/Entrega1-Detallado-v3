@@ -11,6 +11,16 @@ namespace Fire_Emblem {
                     return new DeathBlowSkill(name, description);
                 case "Armored Blow":
                     return new ArmoredBlowSkill(name, description);
+                case "Darting Blow":
+                    return new DartingBlowSkill(name, description);
+                case "Warding Blow":
+                    return new WardingBlowSkill(name, description);
+                case "Sturdy Blow":
+                    return new SturdyBlowSkill(name, description);
+                case "Steady Blow":
+                    return new SteadyBlowSkill(name, description);
+                case "Bracing Blow":
+                    return new BracingBlowSkill(name, description);
                 default:
                     return new GenericSkill(name, description);
             }

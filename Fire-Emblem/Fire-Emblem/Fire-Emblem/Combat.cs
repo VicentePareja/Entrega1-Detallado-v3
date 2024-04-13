@@ -57,11 +57,11 @@ namespace Fire_Emblem
             if (_attacker.CurrentHP > 0 && _defender.CurrentHP > 0)
             {
                 Attack followUpAttack = new Attack(_attacker, _defender, _view);
-                if (_attacker.Spd >= _defender.Spd + 5)
+                if (_attacker.GetEffectiveAttribute("Spd") >= _defender.GetEffectiveAttribute("Spd") + 5)
                 {
                     followUpAttack.PerformAttack(_advantage);
                 }
-                else if (_defender.Spd >= _attacker.Spd + 5)
+                else if (_defender.GetEffectiveAttribute("Spd") >= _attacker.GetEffectiveAttribute("Spd") + 5)
                 {
                     followUpAttack.PerformCounterAttack(_advantage);
                 }

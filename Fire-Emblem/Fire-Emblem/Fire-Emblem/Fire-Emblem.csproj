@@ -12,4 +12,10 @@
       <ProjectReference Include="..\Fire-Emblem-View\Fire-Emblem-View.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Skills\NegateBonus\" />
+      <Folder Include="Skills\NegatePenalty\" />
+      <Folder Include="Skills\Penalty\" />
+    </ItemGroup>
+
 </Project>
