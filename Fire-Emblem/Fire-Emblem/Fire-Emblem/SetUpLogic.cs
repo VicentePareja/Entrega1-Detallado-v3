@@ -277,17 +277,17 @@ namespace Fire_Emblem
         private void AssignSkillsToCharacter(Character character, string skillsText) {
             if (!string.IsNullOrEmpty(skillsText)) {
                 var skillNames = skillsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                var skillFactory = new SkillFactory();
                 foreach (var skillName in skillNames) {
                     var trimmedSkillName = skillName.Trim();
-                    var skill = skillFactory.CreateSkill(trimmedSkillName);
-                    character.AddSkill(skill);
+                    var skill = skills.FirstOrDefault(s => s.Name.Equals(trimmedSkillName, StringComparison.OrdinalIgnoreCase));
+                    if (skill != null) {
+                        character.AddSkill(new Skill(skill.Name, skill.Description));
+                    } else {
+                        character.AddSkill(new Skill(trimmedSkillName, "Descripción no proporcionada"));
+                    }
                 }
             }
         }
-
-
-
         private void AssignCharacterToTeam(string characterLine, Team team)
         {
             var newCharacter = CreateOrCloneCharacter(characterLine);
@@ -330,23 +330,27 @@ namespace Fire_Emblem
 
             try
             {
-                
                 string jsonString = File.ReadAllText(jsonPath);
                 var options = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 };
-                
-                skills = JsonSerializer.Deserialize<List<Skill>>(jsonString, options);
-                
+
+                List<Skill> loadedSkills = JsonSerializer.Deserialize<List<Skill>>(jsonString, options);
+                if (loadedSkills != null) {
+                    skills = new List<Skill>();
+                    var skillFactory = new SkillFactory();
+                    foreach (var loadedSkill in loadedSkills) {
+                        Skill skill = skillFactory.CreateSkill(loadedSkill.Name, loadedSkill.Description);
+                        skills.Add(skill);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al importar habilidades: {ex.Message}");
             }
         }
-
-
 
     }
 }
