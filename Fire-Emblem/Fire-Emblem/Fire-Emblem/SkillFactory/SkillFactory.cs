@@ -9,6 +9,8 @@ namespace Fire_Emblem {
                     return new FairFightSkill(name, description);
                 case "Death Blow":
                     return new DeathBlowSkill(name, description);
+                case "Armored Blow":
+                    return new ArmoredBlowSkill(name, description);
                 default:
                     return new GenericSkill(name, description);
             }
