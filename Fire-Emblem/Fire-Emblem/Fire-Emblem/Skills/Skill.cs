@@ -10,12 +10,9 @@ public class Skill
         Name = name;
         Description = description;
     }
-
-    // Cambio el método para aceptar Combat y el dueño de la habilidad
     public virtual void ApplyEffect(Combat combat, Character owner)
     {
-        // Este método puede ser sobrescrito por clases derivadas.
-        Console.WriteLine($"Applying {Name} to {owner.Name}");
+        Console.WriteLine($"Applying {Name} to {owner.Name}, base skill class.");
     }
 
     public void PrintDetails()

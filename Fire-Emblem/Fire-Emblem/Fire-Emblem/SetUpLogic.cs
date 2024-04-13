@@ -277,17 +277,23 @@ namespace Fire_Emblem
         private void AssignSkillsToCharacter(Character character, string skillsText) {
             if (!string.IsNullOrEmpty(skillsText)) {
                 var skillNames = skillsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                var skillFactory = new SkillFactory();  // Asegúrate de que la fábrica es accesible aquí, puede requerir ser una propiedad/variable de la clase
+
                 foreach (var skillName in skillNames) {
                     var trimmedSkillName = skillName.Trim();
                     var skill = skills.FirstOrDefault(s => s.Name.Equals(trimmedSkillName, StringComparison.OrdinalIgnoreCase));
                     if (skill != null) {
-                        character.AddSkill(new Skill(skill.Name, skill.Description));
+                        skill = skillFactory.CreateSkill(skill.Name, skill.Description);
                     } else {
-                        character.AddSkill(new Skill(trimmedSkillName, "Descripción no proporcionada"));
+                        skill = skillFactory.CreateSkill(trimmedSkillName, "Descripción no proporcionada");
                     }
+
+                    character.AddSkill(skill);
                 }
             }
         }
+
+
         private void AssignCharacterToTeam(string characterLine, Team team)
         {
             var newCharacter = CreateOrCloneCharacter(characterLine);
