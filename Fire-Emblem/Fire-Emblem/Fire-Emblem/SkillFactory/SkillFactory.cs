@@ -41,6 +41,14 @@ namespace Fire_Emblem {
                     return new BrazenSpdRes(name, description);
                 case "Brazen Def/Res":
                     return new BrazenDefRes(name, description);
+                case "Fire Boost":
+                    return new FireBoost(name, description);
+                case "Wind Boost":
+                    return new WindBoost(name, description);
+                case "Earth Boost":
+                    return new EarthBoost(name, description);
+                case "Water Boost":
+                    return new WaterBoost(name, description);
                 default:
                     return new GenericSkill(name, description);
             }
