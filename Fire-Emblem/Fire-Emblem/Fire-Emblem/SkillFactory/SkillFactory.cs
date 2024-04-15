@@ -49,6 +49,10 @@ namespace Fire_Emblem {
                     return new EarthBoost(name, description);
                 case "Water Boost":
                     return new WaterBoost(name, description);
+                case "Will to Win":
+                    return new WillToWin(name, description);
+                case "Perceptive":
+                    return new Perceptive(name, description);
                 default:
                     return new GenericSkill(name, description);
             }
